@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+	.imgShowBar-hor {position: relative; width: 470px; height: 150px; margin: 0 auto; overflow: hidden;}
+	.imgShowBar-hor	ul {margin: 0; padding: 0;}
+	.imgShowBar-hor	ul li {position: absolute; top: 0;display: inline-block; }
+	.imgShowBar-hor	ul li:nth-of-type(1) {left: 0;}
+	.imgShowBar-hor	ul li:nth-of-type(2) {left: 470px;}
+	.imgShowBar-hor	ul li:nth-of-type(3) {left: 940px;}
+	.imgShowBar-hor	ul li:nth-of-type(4) {left: 1410px;}
+	.imgShowBar-hor	ul li:nth-of-type(5) {left: 1890px;}
+
+	.imgShowBar-hor nav {position: absolute; bottom: 10px; right: 10px;}
+	.imgShowBar-hor nav a {display: inline-block; width: 20px; height: 20px; line-height: 20px; margin-right: 5px; color: #f60; background-color: #fff; text-decoration: none; text-align: center;}
+	.imgShowBar-hor nav a:hover, .imgShowBar-hor .active {cursor: pointer; color: #fff; background-color: #f60;}
+
+/**/
+	.imgShowBar-ver {position: relative; width: 470px; height: 150px; margin: 0 auto; overflow: hidden;}
+	.imgShowBar-ver	ul {position: absolute; top: 0; margin: 0; padding: 0;}
+	.imgShowBar-ver	ul li {display: inline-block; }
+
+	.imgShowBar-ver nav {position: absolute; bottom: 10px; right: 10px;}
+	.imgShowBar-ver nav a {display: inline-block; width: 20px; height: 20px; line-height: 20px; margin-right: 5px; color: #f60; background-color: #fff; text-decoration: none; text-align: center;}
+	.imgShowBar-ver nav a:hover, .imgShowBar-ver .active {cursor: pointer; color: #fff; background-color: #f60;}
+
+/**/
+	.imgShowBar-cover {position: relative; width: 470px; height: 150px; margin: 0 auto; overflow: hidden;}
+	.imgShowBar-cover ul {margin: 0; padding: 0;}
+	.imgShowBar-cover ul li {position: absolute; top: 0; display: inline-block; }
+	</style>
+</head>
+<body>
+<div class="imgShowBar-hor">
+	<ul>
+		<li><img src="images/1.jpg" alt=""/></li>
+	    <li><img src="images/2.jpg" alt=""/></li>
+	    <li><img src="images/3.jpg" alt=""/></li>
+	    <li><img src="images/4.jpg" alt=""/></li>
+	    <li><img src="images/5.jpg" alt=""/></li>
+	</ul>
+	<nav>
+		<a href="/#1" class="active">1</a>
+		<a href="/#2">2</a>
+		<a href="/#3">3</a>
+		<a href="/#4">4</a>
+		<a href="/#5">5</a>
+	</nav>
+</div>
+<div class="imgShowBar-ver" style="margin-top: 30px;">
+	<ul>
+		<li><img src="images/1.jpg" alt=""/></li>
+	    <li><img src="images/2.jpg" alt=""/></li>
+	    <li><img src="images/3.jpg" alt=""/></li>
+	    <li><img src="images/4.jpg" alt=""/></li>
+	    <li><img src="images/5.jpg" alt=""/></li>
+	</ul>
+	<nav>
+		<a href="/#1" class="active">1</a>
+		<a href="/#2">2</a>
+		<a href="/#3">3</a>
+		<a href="/#4">4</a>
+		<a href="/#5">5</a>
+	</nav>
+</div>
+<div class="imgShowBar-cover" style="margin-top: 30px;">
+	<ul>
+		<li><img src="images/1.jpg" alt=""/></li>
+	    <li><img src="images/2.jpg" alt=""/></li>
+	    <li><img src="images/3.jpg" alt=""/></li>
+	    <li><img src="images/4.jpg" alt=""/></li>
+	    <li><img src="images/5.jpg" alt=""/></li>
+	</ul>
+</div>
+<script type="text/javascript" src="js/move.js"></script>
+<script type="text/javascript">
+	window.onload = function () {
+		imgShowBarH();
+		imgShowBarV();
+		imgShowBarC();
+	}
+	function imgShowBarH() {
+		var oDiv = document.getElementsByClassName('imgShowBar-hor')[0];
+
+		var oUl = oDiv.getElementsByTagName('ul')[0],
+			oLi = oUl.getElementsByTagName('li');
+
+		var oNav = oDiv.getElementsByTagName('nav')[0],
+			oA = oNav.getElementsByTagName('a');
+
+		var step = oLi[0].offsetWidth,
+			current = 0;
+		
+		for(var i = 0, len = oA.length; i < len; i++ ) {
+			oA[i].index = i;
+			oA[i].addEventListener('mouseover', function(){
+				var index = this.index;		
+				if(current < index) {
+					oLi[index].style.left = step + "px";
+					startMove( oLi[current] , { left : - step } );
+				}else {
+					oLi[index].style.left = -step + "px";
+					startMove( oLi[current] , { left : step } );
+				}
+				//oLi[index].style.left = 0;
+				startMove( oLi[index] ,{ left : 0 });
+				oA[current].className = '';
+				this.className = 'active';
+				current = index;
+			});
+		}		
+	}
+
+	function imgShowBarV() {
+		var oDiv = document.getElementsByClassName('imgShowBar-ver')[0];
+
+		var oUl = oDiv.getElementsByTagName('ul')[0],
+			oLi = oUl.getElementsByTagName('li');
+
+		var oNav = oDiv.getElementsByTagName('nav')[0],
+			oA = oNav.getElementsByTagName('a');
+
+		var step = oLi[0].offsetHeight,
+			current = 0;
+		
+		for(var i = 0, len = oA.length; i < len; i++ ) {
+			oA[i].index = i;
+			oA[i].addEventListener('mouseover', function(){
+				var index = this.index;
+				startMove( oUl ,{ top : -index*step });
+				oA[current].className = '';
+				this.className = 'active';
+				current = index;
+			});
+		}		
+	}
+
+	function imgShowBarC() {
+		var oDiv = document.getElementsByClassName('imgShowBar-cover')[0];
+
+		var oUl = oDiv.getElementsByTagName('ul')[0],
+			oLi = oUl.getElementsByTagName('li');
+
+
+		var len = oLi.length,
+			step = Math.ceil(oDiv.offsetWidth / len );
+
+		for(var i = 0; i < len; i++) {
+			var li = oLi[i];
+			li.style.left = i * step + "px";
+
+			li.index = i;
+
+			li.addEventListener("mouseover", function () {
+				for(var j = 0; j < len; j++) {
+					if(j <= this.index) {
+						startMove(oLi[j], {left: j*30});
+					}else {
+						startMove(oLi[j], {left: (470-120) + (j-1)*30 });
+					}
+				}
+			});
+
+			li.addEventListener("mouseout", function () {
+				for(var j = 0; j < len; j++) {
+					startMove(oLi[j], {left: j * step});
+				}
+			});
+		}
+	}
+</script>
+</body>
+</html>
