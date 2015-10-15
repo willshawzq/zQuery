@@ -6,11 +6,16 @@ window.ZQ = {
 ;(function(window) {
 	"use strict";
 	var Tools = ZQ.Tools || {};
-	Tools.elScale = function(el, callback, senArea) {
+	Tools.elScale = function(el, callback, dir, senArea) {
 		var side = "", senArea = senArea || 15,
 			elWidth = "", elHeight = "",
 			disX = "", disY = "",
 			disL = "", disT = "";
+		var dirs = dir ? (function(str){
+				str = str.toUpperCase();
+				var arr = .split("");
+				if(arr.length > 1) arr.push(str);
+			})(dir) : "R L T B RT RB LT LB".split(" ");
 
 		var getSide = function(el, ev) {
 			elWidth = el.offsetWidth;
@@ -62,7 +67,7 @@ window.ZQ = {
 
 			var funcList = {};
 			
-			"R L T B RT RB LT LB".split(" ").forEach(function(val, i) {
+			dirs.forEach(function(val, i) {
 				funcList[val] = (function(val) {
 					return function(el, ev){
 						val.split("").forEach(function(v, k) {
@@ -74,6 +79,8 @@ window.ZQ = {
 			return funcList;
 		}
 		var setHover = function(side) {
+			if(!side) return;
+
 			var	sides = "R L T B RB LT RT LB C".split(" "),
 				pointers = "w-resize n-resize nw-resize ne-resize default".split(" ");
 
@@ -83,28 +90,36 @@ window.ZQ = {
 			}
 		}
 		var mouseMove = function(ev) {
-			var ev = ev || window.event;
-			var func = funcList();
-			if(side && side.indexOf("C") == -1) {
-				func[side](el, ev);
-			}
+			var ev = ev || window.event,
+				func = funcList(),
+				usable = side && dirs.includes(side) 
+							&& (side.indexOf("C") == -1);
+
+			if(usable) func[side](el, ev);
+
+			if(el.releaseCapture) el.releaseCapture();//this is for the IE
 		}
 		var mouseUp = function() {
 			el.style.cursor = "default";
-			document.removeEventListener("mousemove", mouseMove);
-			document.removeEventListener("mouseup", mouseUp);
+
+			//In old IE,if i use the removeAttch to remove the binding function,
+			//IE just can not drop the function
+			document.onmousemove = document.onmouseup = null;
 		}
 		el.addEventListener("mousedown", function(ev) {
 			ev = ev || window.event;
 
 			side = getSide(this, ev);
-			document.addEventListener("mousemove", mouseMove);
-			document.addEventListener("mouseup", mouseUp);
+
+			document.onmousemove = mouseMove;
+			document.onmouseup = mouseUp;
 
 			return false;
 		});
 		el.addEventListener("mouseover", function(ev) {
-			el.style.cursor = setHover(getSide(el, ev));
+			ev = ev || window.event;
+			var current = getSide(el, ev);
+			el.style.cursor = setHover(dirs.includes(side) ? current : null);
 		});
 	}
 	ZQ.Tools = Tools;
