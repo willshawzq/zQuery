@@ -1,4 +1,3 @@
-
 window.ZQ = {
 	version: "1.0.0",
 	copyRight: "copyright © WillShaw"
@@ -13,9 +12,9 @@ window.ZQ = {
 			disL = "", disT = "";
 		var dirs = dir ? (function(str){
 				str = str.toUpperCase();
-				var arr = .split("");
+				var arr = str.split("");
 				if(arr.length > 1) arr.push(str);
-			})(dir) : "R L T B RT RB LT LB".split(" ");
+			})(dir) : "R L T B RT RB LT LB C".split(" ");
 
 		var getSide = function(el, ev) {
 			elWidth = el.offsetWidth;
@@ -41,7 +40,7 @@ window.ZQ = {
 			}else if(disY > iB) {
 				sides.push("B");
 			}
-			if(sides.length == 0 && 
+			if( sides.length == 0 && 
 				(iL < disX < iR) && (iT < disY < iB) ) {
 				sides.push("C");
 			}
@@ -82,8 +81,7 @@ window.ZQ = {
 			if(!side) return;
 
 			var	sides = "R L T B RB LT RT LB C".split(" "),
-				pointers = "w-resize n-resize nw-resize ne-resize default".split(" ");
-
+				pointers = "w-resize n-resize nw-resize ne-resize move".split(" ");
 			var index = Math.floor(sides.indexOf(side) / 2);
 			if(pointers[index]) {
 				return pointers[index];
@@ -92,8 +90,10 @@ window.ZQ = {
 		var mouseMove = function(ev) {
 			var ev = ev || window.event,
 				func = funcList(),
-				usable = side && dirs.includes(side) 
-							&& (side.indexOf("C") == -1);
+				usable = side && dirs.indexOf(side) != -1
+							&& (side.indexOf("C") == -1)
+				//usable = side && dirs.includes(side) 
+				//			&& (side.indexOf("C") == -1);
 
 			if(usable) func[side](el, ev);
 
@@ -116,12 +116,27 @@ window.ZQ = {
 
 			return false;
 		});
-		el.addEventListener("mouseover", function(ev) {
+		/*el.addEventListener("mouseenter", function(ev) {
+			ev = ev || window.event;
+			ev.stopPropagation();
+			console.log("enter");
+			var current = getSide(el, ev);
+			//includes is a ES7 Syntax
+			//el.style.cursor = setHover(dirs.includes(side) ? current : null);
+			el.style.cursor = setHover(dirs.indexOf(current) != -1 ? current : null);
+		});*/
+		el.addEventListener("mousemove", function(ev) {
 			ev = ev || window.event;
 			var current = getSide(el, ev);
-			el.style.cursor = setHover(dirs.includes(side) ? current : null);
+			//includes is a ES7 Syntax
+			//el.style.cursor = setHover(dirs.includes(side) ? current : null);
+			el.style.cursor = setHover(dirs.indexOf(current) != -1 ? current : null);
 		});
 	}
 	ZQ.Tools = Tools;
+
+	ZQ.init = function() {
+
+	}
 }(window));
 
